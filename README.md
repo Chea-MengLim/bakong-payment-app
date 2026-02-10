@@ -287,9 +287,3 @@ The **cart + payment** pages use:
 
 ---
 
-## Notes & Customization
-
-- **Currencies**: current KHQR integration supports `USD` and `KHR` via the `KhqrCurrency` type.
-- **Security**: this demo focuses on Bakong integration; harden security (auth, rate limiting, input validation, secrets management) before production.
-- **Error handling**: both backend and frontend return/handle error messages; you can customize UI messages to match your product UX.
-- **Deployment**: you can containerize `bakong-api` and deploy `bakong-ui` as a static site or on a platform like Vercel, adjusting `NEXT_PUBLIC_API_URL` for your environment.
