@@ -35,4 +35,4 @@ logging:
 
 bakong:
   base-url: https://api-bakong.nbc.gov.kh/v1
-  token: your_token (get from bakong : https://api-bakong.nbc.gov.kh/register)
+  token: your_token:(get_from_bakong->https://api-bakong.nbc.gov.kh/register)

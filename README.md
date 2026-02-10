@@ -287,3 +287,37 @@ The **cart + payment** pages use:
 
 ---
 
+## Screenshots (API & UI)
+
+These screenshots illustrate the end‑to‑end Bakong KHQR payment flow in this demo.
+
+### API endpoints (Swagger UI)
+
+The backend exposes all seller, product, and Bakong KHQR endpoints via Swagger:
+
+![Bakong API endpoints – Swagger UI](docs/images/bakong-api-swagger.png)
+
+### Product listing page
+
+The main store page shows all products, including pricing and discount labels:
+
+![All Products page](docs/images/bakong-store-products.png)
+
+### Register as Seller form
+
+Sellers can register by providing store, contact, and Bakong account information:
+
+![Register as Seller form](docs/images/bakong-register-seller.png)
+
+### Shopping cart with per-seller payment
+
+The cart groups items by seller and allows paying each seller separately:
+
+![Shopping cart page](docs/images/bakong-shopping-cart.png)
+
+### KHQR payment modal
+
+When the user chooses to pay, the app generates a KHQR, shows the MD5, expiry, and verification status, and waits for Bakong payment confirmation:
+
+![Pay with KHQR modal](docs/images/bakong-khqr-payment.png)
+
