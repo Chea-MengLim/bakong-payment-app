@@ -1,5 +1,7 @@
 ## Bakong KHQR Payment Integration Demo
 
+**Disclaimer:** This repository is **not official** for Bakong. It is an independent demo/integration example and is not affiliated with or endorsed by the National Bank of Cambodia (NBC) or the Bakong service.
+
 Monorepo containing:
 
 - **`bakong-api`**: Spring Boot (Java 21) backend exposing Bakong KHQR payment APIs (QR generation, verification, deep link, and transaction status check).
@@ -37,6 +39,10 @@ The main goal of this project is to **show how to integrate payments with Bakong
 ---
 
 ## Prerequisites
+
+- **Bakong account & API access**
+  - Download the **Bakong** app from the [Play Store](https://play.google.com/store/apps) or [App Store](https://www.apple.com/app-store/) and create an account to get your **Bakong account ID**.
+  - Get a **Bakong API token** by registering at: [https://api-bakong.nbc.gov.kh/register](https://api-bakong.nbc.gov.kh/register).
 
 - **Java & Backend**
   - Java 21
