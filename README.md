@@ -82,13 +82,13 @@ Example (pseudo, adjust to your environment):
 
 ```yaml
 bakong:
-  base-url: https://api-bakong.nbc.gov.kh/v1
-  token: YOUR_BAKONG_TOKEN
+  base-url: ${BAKONG_BASE_URL:https://api-bakong.nbc.gov.kh/v1}
+  token: ${BAKONG_API_TOKEN:}
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/bakong
-    username: bakong
-    password: your_password
+    username: postgres
+    password: your-password
 ```
 
 ### 2. Run the Backend
