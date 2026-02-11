@@ -34,5 +34,5 @@ logging:
     org.hibernate.orm.connections.pooling: warn
 
 bakong:
-  base-url: https://api-bakong.nbc.gov.kh/v1
-  token: your_token:(get_from_bakong->https://api-bakong.nbc.gov.kh/register)
+  base-url: ${BAKONG_BASE_URL:https://api-bakong.nbc.gov.kh/v1}
+  token: ${BAKONG_API_TOKEN:}

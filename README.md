@@ -60,7 +60,18 @@ The main goal of this project is to **show how to integrate payments with Bakong
 
 ### 1. Configure Bakong & Database
 
-Edit `bakong-api/src/main/resources/application.yml` to set:
+Create a `.env.local` file in the `bakong-api` folder:
+
+- `bakong-api/.env.local`
+
+Example:
+
+```properties
+BAKONG_BASE_URL=https://api-bakong.nbc.gov.kh/v1
+BAKONG_API_TOKEN=PUT_YOUR_REAL_TOKEN_HERE
+```
+
+Then review `bakong-api/src/main/resources/application.yml`:
 
 - **Database**: JDBC URL, username, password for PostgreSQL.
 - **Bakong API**:
