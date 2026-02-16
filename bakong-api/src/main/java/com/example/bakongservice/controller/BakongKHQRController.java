@@ -1,6 +1,7 @@
 package com.example.bakongservice.controller;
 
 import com.example.bakongservice.model.dto.request.*;
+import com.example.bakongservice.model.dto.response.CheckBakongAccountResponse;
 import com.example.bakongservice.model.dto.response.CheckTransactionResponse;
 import com.example.bakongservice.service.BakongKHQRService;
 import kh.gov.nbc.bakong_khqr.model.*;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -69,6 +71,14 @@ public class BakongKHQRController {
             @RequestBody CheckTransactionRequest request
     ) {
         CheckTransactionResponse response = khqrService.checkTransactionByMd5(request.getMd5());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/check-bakong-account")
+    public ResponseEntity<CheckBakongAccountResponse> checkBakongAccount(
+            @Valid @RequestBody CheckBakongAccountRequest request
+    ) {
+        CheckBakongAccountResponse response = khqrService.checkBakongAccount(request.getAccountId());
         return ResponseEntity.ok(response);
     }
 }

@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
-import { registerSeller } from '@/lib/api';
+import { registerSeller, checkBakongAccount } from '@/lib/api';
 import { SellerRegistrationRequest } from '@/lib/types';
+
+type BakongCheckStatus = 'idle' | 'checking' | 'exists' | 'not_found' | 'error';
 
 export default function RegisterSellerPage() {
   const router = useRouter();
@@ -20,12 +22,39 @@ export default function RegisterSellerPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<{ id: number; password: string } | null>(null);
+  const [bakongCheck, setBakongCheck] = useState<{ status: BakongCheckStatus; message?: string }>({ status: 'idle' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    if (e.target.name === 'bakongAccountId') {
+      setBakongCheck({ status: 'idle' });
+    }
+  };
+
+  const handleVerifyBakongAccount = async () => {
+    const accountId = formData.bakongAccountId?.trim();
+    if (!accountId) {
+      setBakongCheck({ status: 'error', message: 'Enter a Bakong Account ID first' });
+      return;
+    }
+    setBakongCheck({ status: 'checking' });
+    setError(null);
+    try {
+      const res = await checkBakongAccount(accountId);
+      if (res.responseCode === 0) {
+        setBakongCheck({ status: 'exists', message: res.responseMessage || 'Account verified' });
+      } else {
+        setBakongCheck({ status: 'not_found', message: res.responseMessage || 'Account not found' });
+      }
+    } catch (err) {
+      setBakongCheck({
+        status: 'error',
+        message: err instanceof Error ? err.message : 'Could not verify Bakong account',
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -152,16 +181,41 @@ export default function RegisterSellerPage() {
               <label htmlFor="bakongAccountId" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
                 Bakong Account ID *
               </label>
-              <input
-                type="text"
-                id="bakongAccountId"
-                name="bakongAccountId"
-                required
-                value={formData.bakongAccountId}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-500"
-                placeholder="Bakong Account ID"
-              />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  id="bakongAccountId"
+                  name="bakongAccountId"
+                  required
+                  value={formData.bakongAccountId}
+                  onChange={handleChange}
+                  className="flex-1 px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-500"
+                  placeholder="e.g. user@bank"
+                />
+                <button
+                  type="button"
+                  onClick={handleVerifyBakongAccount}
+                  disabled={bakongCheck.status === 'checking' || !formData.bakongAccountId.trim()}
+                  className="px-4 py-2 rounded-lg bg-zinc-700 dark:bg-zinc-600 text-white text-sm font-medium hover:bg-zinc-600 dark:hover:bg-zinc-500 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                >
+                  {bakongCheck.status === 'checking' ? 'Checking...' : 'Verify'}
+                </button>
+              </div>
+              {bakongCheck.status === 'exists' && (
+                <p className="mt-1.5 text-sm text-green-600 dark:text-green-400">
+                  ✓ {bakongCheck.message}
+                </p>
+              )}
+              {bakongCheck.status === 'not_found' && (
+                <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
+                  {bakongCheck.message}. You must use a valid Bakong account to register.
+                </p>
+              )}
+              {bakongCheck.status === 'error' && (
+                <p className="mt-1.5 text-sm text-amber-600 dark:text-amber-400">
+                  {bakongCheck.message}
+                </p>
+              )}
             </div>
 
             <div>
