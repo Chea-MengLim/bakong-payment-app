@@ -1,6 +1,7 @@
 package com.example.bakongservice.service.impl;
 
 import com.example.bakongservice.model.dto.request.*;
+import com.example.bakongservice.model.dto.response.CheckBakongAccountResponse;
 import com.example.bakongservice.model.dto.response.CheckTransactionResponse;
 import com.example.bakongservice.service.BakongKHQRService;
 import kh.gov.nbc.bakong_khqr.BakongKHQR;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
@@ -114,6 +116,36 @@ public class BakongKHQRServiceImpl implements BakongKHQRService {
         );
 
         return response.getBody();
+    }
+
+    @Override
+    public CheckBakongAccountResponse checkBakongAccount(String accountId) {
+        String url = bakongBaseUrl + "/check_bakong_account";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(bakongToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, String> body = Map.of("accountId", accountId);
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
+
+        try {
+            ResponseEntity<CheckBakongAccountResponse> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    entity,
+                    CheckBakongAccountResponse.class
+            );
+            return response.getBody();
+        } catch (RestClientException e) {
+            throw new RuntimeException("Failed to verify Bakong account: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public boolean checkBakongAccountExists(String accountId) {
+        CheckBakongAccountResponse res = checkBakongAccount(accountId);
+        return res != null && Integer.valueOf(0).equals(res.getResponseCode());
     }
 
     /* ---------- Common success check ---------- */

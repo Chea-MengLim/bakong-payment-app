@@ -71,3 +71,11 @@ export interface Seller {
   createdAt: string;
   updatedAt: string;
 }
+
+/** Response from Bakong check_bakong_account API. responseCode 0 = exists, 1 = not found. */
+export interface CheckBakongAccountResponse {
+  responseCode: number;
+  responseMessage: string;
+  errorCode: number | null;
+  data: unknown;
+}

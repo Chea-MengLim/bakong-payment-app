@@ -18,6 +18,7 @@ The main goal of this project is to **show how to integrate payments with Bakong
   - Uses official **Bakong KHQR Java SDK**: `kh.gov.nbc.bakong_khqr:sdk-java:1.0.0.16`.
   - Exposes REST endpoints under `http://localhost:8080/api/v1`.
   - Key Bakong endpoints:
+    - `POST /api/v1/khqr/check-bakong-account` – check if a Bakong account ID exists (used before seller registration).
     - `POST /api/v1/khqr/generate/merchant` – generate a merchant KHQR + MD5 hash.
     - `POST /api/v1/khqr/verify` – verify if a KHQR is valid.
     - `POST /api/v1/khqr/decode` – decode a KHQR into detailed data.
@@ -31,7 +32,7 @@ The main goal of this project is to **show how to integrate payments with Bakong
   - Next.js with the App Router (`app/` directory), TypeScript, React.
   - Talks to the backend via REST using `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:8080/api/v1`).
   - Main flows:
-    - Register a seller.
+    - Register a seller (with **Bakong account verification**: verify button + backend validation before creating a seller).
     - Create products for a seller.
     - Browse products and sellers.
     - Add products to cart and **pay via Bakong KHQR** (QR generation + transaction check).
@@ -264,12 +265,14 @@ The backend exposes:
 - `GET /api/v1/products/seller/{sellerId}` – products by seller.
 - `POST /api/v1/products/seller/{sellerId}` – create product.
 - `GET /api/v1/sellers` – list sellers.
-- `POST /api/v1/sellers/register` – register a new seller.
+- `POST /api/v1/sellers/register` – register a new seller (backend validates that the Bakong account ID exists before creating the seller).
+- `POST /api/v1/khqr/check-bakong-account` – check if a Bakong account ID exists (request: `{ "accountId": "user@bank" }`; response: `responseCode` 0 = exists, 1 = not found).
 
 The frontend wraps these in `bakong-ui/lib/api.ts`:
 
 - `getAllProducts()`, `getProductById(id)`, `getProductsBySeller(sellerId)`
 - `getAllSellers()`
+- `checkBakongAccount(accountId)` – verify a Bakong account before or during seller registration.
 - `registerSeller(request)`
 - `createProduct(sellerId, request)`
 
@@ -278,7 +281,7 @@ Pages under `bakong-ui/app/`:
 - `page.tsx` – main landing / product listing.
 - `products/[id]/page.tsx` – product detail with “Add to cart” / “Pay” flows.
 - `cart/page.tsx` – cart summary and checkout.
-- `register-seller/page.tsx` – seller registration.
+- `register-seller/page.tsx` – seller registration with a **Verify** button next to the Bakong Account ID field (calls `checkBakongAccount`); shows success or error message. Backend also validates the account on submit and rejects registration if the account does not exist.
 - `create-product/page.tsx` – create product for a seller.
 - `sellers/page.tsx` and `products/seller/[sellerId]/page.tsx` – seller and seller‑specific products.
 
@@ -322,7 +325,7 @@ The main store page shows all products, including pricing and discount labels:
 
 ### Register as Seller form
 
-Sellers can register by providing store, contact, and Bakong account information:
+Sellers can register by providing store, contact, and Bakong account information. The form includes a **Verify** button to check that the Bakong Account ID exists before submitting; the backend also validates the account when creating a new seller.
 
 ![Register as Seller form](docs/images/bakong-register-seller.png)
 

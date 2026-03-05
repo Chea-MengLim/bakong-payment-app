@@ -5,6 +5,7 @@ import com.example.bakongservice.model.dto.response.SellerInfoResponse;
 import com.example.bakongservice.model.dto.response.SellerRegistrationResponse;
 import com.example.bakongservice.model.entity.Seller;
 import com.example.bakongservice.repository.SellerRepository;
+import com.example.bakongservice.service.BakongKHQRService;
 import com.example.bakongservice.service.SellerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +23,7 @@ public class SellerServiceImpl implements SellerService {
 
     private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BakongKHQRService bakongKHQRService;
 
     private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
@@ -40,6 +42,11 @@ public class SellerServiceImpl implements SellerService {
         // Check if bakongAccountId already exists
         if (sellerRepository.existsByBakongAccountId(request.getBakongAccountId())) {
             throw new IllegalArgumentException("Bakong Account ID already exists: " + request.getBakongAccountId());
+        }
+
+        // Verify Bakong account exists before creating seller
+        if (!bakongKHQRService.checkBakongAccountExists(request.getBakongAccountId())) {
+            throw new IllegalArgumentException("Bakong Account ID does not exist or could not be verified: " + request.getBakongAccountId() + ". Please use a valid Bakong account.");
         }
 
         // Generate 8-character password
