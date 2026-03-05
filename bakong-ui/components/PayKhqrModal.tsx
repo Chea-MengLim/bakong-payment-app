@@ -11,7 +11,6 @@ import {
 } from '@/lib/khqr';
 import type { StoreInfo } from '@/lib/types';
 
-const OFFSET_PHNOM_PENH = 7 * 60 * 60 * 1000;
 
 type Props = {
   isOpen: boolean;
@@ -81,14 +80,14 @@ export default function PayKhqrModal({
     setVerifyValid(null);
     setVerifyError(null);
 
-    // Compute a fresh expiration timestamp for this QR (3 minutes from now, Phnom Penh time)
+    // Compute a fresh expiration timestamp for this QR (3 minutes from now)
     const merchantCity =
       process.env.NEXT_PUBLIC_KHQR_MERCHANT_CITY || 'Phnom Penh';
     const terminalLabel =
       process.env.NEXT_PUBLIC_KHQR_TERMINAL_LABEL || 'Cashier_1';
 
       // 1 minute 50 seconds = 110 seconds
-    const expTs = Date.now() + 110 * 1000 + OFFSET_PHNOM_PENH;
+    const expTs = Date.now() + 110 * 1000;
     setExpirationTimestamp(expTs);
 
     const request: GenerateMerchantKhqrRequest = {
@@ -153,7 +152,7 @@ export default function PayKhqrModal({
     if (!isOpen || expirationTimestamp == null) return;
 
     const updateRemaining = () => {
-      const now = Date.now() + OFFSET_PHNOM_PENH; // phnom penh time
+      const now = Date.now();
       const diffMs = expirationTimestamp - now;
       if (diffMs <= 0) {
         setRemainingSeconds(0);
